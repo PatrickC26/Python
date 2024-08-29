@@ -36,3 +36,10 @@ def init():
 
 def sendRequest():
     client.publish("m", 'A' + str(_2_data.motor().getBrakeValue()) + "%")
+
+
+
+init()
+
+client.loop_forever()
+client.disconnect()
