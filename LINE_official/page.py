@@ -62,6 +62,7 @@ def process_updateInfo():
     while 1:
         try:
             if isShuttingDown:
+                error_Handling.error_info_Handling(0, "[INFO] Shutting down process updater")
                 break
             if isRenewing:
                 updateInfo()
@@ -150,7 +151,7 @@ def init_main_page():
         isShuttingDown = True
         error_Handling.error_info_Handling(0, "[INFO] Shutting down")
         Root_mainPage.destroy()
-        Root_settingsPage.destroy()
+        sys.exit(0)
 
     Root_mainPage.protocol("WM_DELETE_WINDOW", funcShutDown)
 
@@ -170,11 +171,8 @@ def init_settings_page():
     top_frame = tk.Frame(Root_settingsPage)
     top_frame.pack(side=tk.TOP, fill=tk.Y, expand=True, padx=10, pady=2)
 
-    image_label = tk.Label(top_frame, text="Lab_T1")
+    image_label = tk.Label(top_frame, text="設定", font=("Arial", 20))
     image_label.grid(row=0, column=0, padx=0, pady=0)
-
-    name_label = tk.Entry(top_frame, font=("Arial", 14))
-    name_label.grid(row=0, column=1, padx=20, pady=50)
     # ======= top frame =======
 
 
@@ -182,11 +180,21 @@ def init_settings_page():
     middle_frame = tk.Frame(Root_settingsPage)
     middle_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=10, pady=2)
 
-    image_label = tk.Label(middle_frame, text="Lab_B")
-    image_label.grid(row=0, column=0, padx=0, pady=0)
 
-    name_label = tk.Entry(middle_frame, font=("Arial", 14))
-    name_label.grid(row=0, column=1, padx=20, pady=50)
+    L_channel_access = tk.Label(middle_frame, text="Channel access token", font=("Arial", 14))
+    L_channel_access.grid(row=0, column=0, padx=0, pady=0)
+    T_channel_access = tk.Entry(middle_frame, font=("Arial", 14))
+    T_channel_access.grid(row=0, column=1, padx=0, pady=10)
+
+    L_webhook_id = tk.Label(middle_frame, text="webhook ID", font=("Arial", 14))
+    L_webhook_id.grid(row=1, column=0, padx=0, pady=0)
+    T_webhook_id = tk.Entry(middle_frame, font=("Arial", 14))
+    T_webhook_id.grid(row=1, column=1, padx=0, pady=10)
+
+    L_webhook_bearer = tk.Label(middle_frame, text="webhook bearer", font=("Arial", 14))
+    L_webhook_bearer.grid(row=2, column=0, padx=0, pady=0)
+    T_webhook_bearer = tk.Entry(middle_frame, font=("Arial", 14))
+    T_webhook_bearer.grid(row=2, column=1, padx=0, pady=10)
     # ======= middle frame =======
 
 
@@ -212,6 +220,7 @@ def init_settings_page():
 def save_settings():
     error_Handling.error_info_Handling(200, "[INFO] settings saved")
     Root_settingsPage.withdraw()
+    updateLineAccount()
 
 def process_loading_animation():
     global isRenewing, B_renew, I_renew, isShuttingDown
@@ -225,6 +234,7 @@ def process_loading_animation():
 
     while 1:
         if isShuttingDown:
+            error_Handling.error_info_Handling(0, "[INFO] Shutting down loading animation")
             break
         try:
             if isRenewing:
@@ -232,12 +242,14 @@ def process_loading_animation():
                 photo = ImageTk.PhotoImage(I_renew.rotate(rotateAngle))
                 B_renew.config(image=photo)  # Keep a reference to avoid garbage collection
             else:
-                rotateAngle = 0
-                photo = ImageTk.PhotoImage(I_renew)
-                B_renew.config(image=photo)
+                if rotateAngle != 0:
+                    rotateAngle = 0
+                    photo = ImageTk.PhotoImage(I_renew)
+                    B_renew.config(image=photo)
             time.sleep(0.15)
         except Exception as e:
             if isShuttingDown:
+                error_Handling.error_info_Handling(0, "[INFO] Shutting down loading animation")
                 break
             error_Handling.error_info_Handling(-1, "[ERROR] loading animation failed with error", e)
             time.sleep(.5)
@@ -256,10 +268,4 @@ if __name__ == '__main__':
     start_process_reloading.start()
     start_process_updateInfo.start()
     # a.start()
-    # start_process_root.start()
-
-    # start_process_reloading.join()
-    # start_process_update.join()
-    # start_process_root.join()
-    # Root_settingsPage.mainloop()
     Root_mainPage.mainloop()
